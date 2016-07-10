@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WakeUp</string>
+    <string name="text_alarm">Alarm</string>
+    <string name="text_exit">Exit</string>
+</resources>
