@@ -102,16 +102,9 @@ public class AlarmAdapter extends BaseAdapter{
         }
 
         viewHolder.displaytime.setText(hour + ":" + minute);
-        viewHolder.displaytag.setText(tag);
         viewHolder.displayrepeat.setText(repeat);
-        /*
-        if(TextUtils.isEmpty(tag)) {
-            viewHolder.display_tag.setVisibility(View.GONE);
-        }
-        else {
-            viewHolder.display_tag.setVisibility(View.VISIBLE);
-        }
-        */
+        if(!tag.equals("None"))
+            viewHolder.displaytag.setText(tag);
 
         viewHolder.switchisopen.setOnCheckedChangeListener(null);
         //System.out.println("ALARM" + position+" is " + statelist.get(position));

@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:fontFamily="sans-serif"
-            android:textSize="54dp"/>
+            android:textSize="54dp"
+            android:textColor="@color/textPrimary"/>
 
         <TextView
             android:id="@+id/display_repeat"

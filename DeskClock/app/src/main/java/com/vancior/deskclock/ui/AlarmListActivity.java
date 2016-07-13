@@ -1,5 +1,7 @@
 package com.vancior.deskclock.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,11 +13,13 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.vancior.deskclock.adapter.AlarmAdapter;
 import com.vancior.deskclock.R;
 import com.vancior.deskclock.bean.EachAlarm;
+import com.vancior.deskclock.service.AlarmReceiver;
 import com.vancior.deskclock.util.AlarmDBManager;
 
 import java.util.List;
@@ -79,8 +83,25 @@ public class AlarmListActivity extends AppCompatActivity {
             case 0:
                 Snackbar.make(AlarmListActivity.this.getCurrentFocus(), "Alarm has been deleted.", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
-                alarmDBManager.delete(alarmList.get(alarmToDelete).getAlramId());
-                //TODO cancel broadcast
+                EachAlarm tempalarm = alarmList.get(alarmToDelete);
+                alarmDBManager.delete(tempalarm.getAlramId());
+                AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+
+                Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+                alarmIntent.setAction("com.vancior.deskclok.ACTION_ALARM");
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("alarmid", tempalarm.getAlramId());
+                bundle.putInt("hour", tempalarm.getHour());
+                bundle.putInt("minute", tempalarm.getMinute());
+                bundle.putInt("isvibrate", tempalarm.getIsvibrate());
+                bundle.putString("repeat", tempalarm.getRepeat());
+                bundle.putString("ringtone", tempalarm.getRingtone());
+                bundle.putString("tag", tempalarm.getTag());
+                alarmIntent.putExtras(bundle);
+
+                alarmManager.cancel(PendingIntent.getBroadcast(this, tempalarm.getAlramId(),
+                        alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                 updateListAndAdapter();
                 break;
             default:

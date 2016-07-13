@@ -2,8 +2,6 @@ package com.vancior.deskclock.ui;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,13 +21,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.vancior.deskclock.R;
-import com.vancior.deskclock.bean.AudioList;
+import com.vancior.deskclock.util.AudioList;
 import com.vancior.deskclock.bean.EachAlarm;
 import com.vancior.deskclock.service.AlarmReceiver;
 import com.vancior.deskclock.util.AlarmDBManager;
 import com.vancior.deskclock.util.NextAlarm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AlarmSettingActivity extends AppCompatActivity implements View.OnClickListener{
@@ -55,6 +52,7 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
     private TextView textView_tag;
     private TextView textView_ringtonetitle;
     private TextView textView_ringtone;
+    private EditText editText;
 
     private EachAlarm currentAlarm;
 
@@ -93,7 +91,6 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
 
         if(isAdd == 0) {
             AlarmDBManager alarmDBManager = new AlarmDBManager(this);
-            System.out.println("sdfhsdkjf  " + alarmId);
             currentAlarm = alarmDBManager.findOne(alarmId);
             hour = currentAlarm.getHour();
             minute = currentAlarm.getMinute();
@@ -143,19 +140,17 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
             AlarmDBManager alarmDBManager = new AlarmDBManager(this);
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
             Intent alarmIntent = new Intent(this, AlarmReceiver.class);
             alarmIntent.setAction("com.vancior.deskclock.ACTION_ALARM");
 
-            repeat = getRepeatString();
+            if(ifRepeatChange || isAdd == 1)
+                repeat = getRepeatString();
 
             Bundle bundle = new Bundle();
             bundle.putInt("hour", hour);
@@ -173,14 +168,12 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
 
             switch (isAdd) {
                 case 1:
-                    alarmId = alarmDBManager.insert(hour, minute, repeat, "erw", isVibtate, tag, 1);
-
-
+                    alarmId = alarmDBManager.insert(hour, minute, repeat, ringtone, isVibtate, tag, 1);
                     alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent);
                     finish();
                     break;
                 case 0:
-                    alarmDBManager.update(alarmId, hour, minute, isVibtate, 1, repeat, "weiru", tag);
+                    alarmDBManager.update(alarmId, hour, minute, isVibtate, 1, repeat, ringtone, tag);
 
                     alarmManager.cancel(PendingIntent.getBroadcast(this, alarmId,
                             alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT));
@@ -200,6 +193,7 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         if((view == checkBox_repeat && checkBox_repeat.isChecked())|| view == textView_repeat && !checkBox_repeat.isChecked()) {
+            ifRepeatChange = true;
             AlertDialog.Builder builder_repeat = new AlertDialog.Builder(this);
             builder_repeat.setTitle("Repeat Days");
             builder_repeat.setMultiChoiceItems(new String[]{"Monday", "Tuesday", "Wednesday",
@@ -235,11 +229,14 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
             });
             builder_repeat.show();
         }
+
         else if((view == checkBox_repeat && !checkBox_repeat.isChecked())|| view == textView_repeat && checkBox_repeat.isChecked()){
+            ifRepeatChange = true;
             for (int j = 0; j < 7; j++)
                 repeatDays[j] = false;
             checkBox_repeat.setChecked(false);
         }
+
         else if(view == textView_vibrate) {
             if(isVibtate == 1) {
                 isVibtate = 0;
@@ -250,10 +247,12 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
                 checkBox_vibrate.setChecked(true);
             }
         }
+
         else if(view == textView_label || view == textView_tag) {
             AlertDialog.Builder builder_tag = new AlertDialog.Builder(this);
             builder_tag.setTitle("Label");
-            final EditText editText = new EditText(this);
+            editText = new EditText(this);
+            editText.setText(tag);
             builder_tag.setView(editText);
             builder_tag.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                 @Override
@@ -271,10 +270,10 @@ public class AlarmSettingActivity extends AppCompatActivity implements View.OnCl
             });
             builder_tag.show();
         }
+
         else if(view == textView_ringtonetitle || view == textView_ringtone) {
             AudioList audioList = new AudioList(this);
-            List<Ringtone> ringtones = new ArrayList<>();
-            ringtones = audioList.getRingtoneList(RingtoneManager.TYPE_NOTIFICATION);
+            List<Ringtone> ringtones = audioList.getRingtoneList(RingtoneManager.TYPE_ALARM);
             AlertDialog.Builder builder_ringtone = new AlertDialog.Builder(this);
             builder_ringtone.setTitle("Ringtone");
             final String tempringtones[] = new String[ringtones.size()];
