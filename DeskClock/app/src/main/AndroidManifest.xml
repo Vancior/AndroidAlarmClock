@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vancior.deskclock">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.AlarmListActivity"
+            android:label="@string/title_activity_alarm_list"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.vancior.deskclock.ACTION_ALARMLIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.vancior.deskclock.ALARMLIST_CATEGORY" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.AlarmSettingActivity"
+            android:label="AlarmSetting"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.vancior.deskclock.ACTION_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.vancior.deskclock.SETTING_CATEGORY" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.AlarmActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert"
+            />
+        <receiver
+            android:name=".service.AlarmReceiver"
+            android:exported="false"
+            android:process=":remote" >
+            <intent-filter android:priority="1000">
+                <action android:name="com.vancior.deskclock.RECEIVER" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

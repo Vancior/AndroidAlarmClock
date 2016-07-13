@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">DeskClock</string>
+    <string name="title_activity_alarm_list">AlarmList</string>
+    <string name="text_alarm">Alarm</string>
+    <string name="action_settings">Settings</string>
+    <string name="text_repeat">Repeat</string>
+    <string name="text_vibrate">Vibrate</string>
+    <string name="text_ringtone">RingTone</string>
+    <string name="text_ringtone_default">Default</string>
+    <string name="text_label">Label</string>
+    <string name="text_label_default">None</string>
+</resources>
