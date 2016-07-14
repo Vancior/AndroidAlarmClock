@@ -29,6 +29,7 @@ public class AudioList {
         int count = cursor.getCount();
         for(int i = 0; i < count; i++)
             ringtones.add(ringtoneManager.getRingtone(i));
+        cursor.close();
         return ringtones;
     }
 }

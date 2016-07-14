@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.vancior.deskclock.R;
 import com.vancior.deskclock.util.AudioList;
 import com.vancior.deskclock.util.NextAlarm;
 
@@ -35,7 +36,7 @@ public class AlarmActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //setContentView(R.layout.activity_alarm);
+        setContentView(R.layout.activity_alarm);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -129,7 +130,9 @@ public class AlarmActivity extends AppCompatActivity{
 
     private void setNextAlarm() {
         String repeat = bundle.getString("repeat");
-        if(!repeat.equals("Only once")) {
+        System.out.println(repeat);
+        if(!(repeat.equals("Only once"))) {
+            Log.d("SetNext", "setting");
             int hour = bundle.getInt("hour");
             int minute = bundle.getInt("minute");
             long nextTime = NextAlarm.calNextAlarm(repeat, hour, minute);
@@ -148,5 +151,6 @@ public class AlarmActivity extends AppCompatActivity{
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, bundle.getInt("alarmid"),
                 ringIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent);
+        Log.d("SetNext", "5minutes");
     }
 }
